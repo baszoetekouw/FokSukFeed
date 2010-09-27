@@ -190,7 +190,7 @@ sub write_rss
 
 	foreach my $k (@keys[0..$NUMITEMS-1])
 	{
-		print "=>$k\n";
+		#print "=>$k\n";
 		my $item = $items->{$k};
 
 		my $desc = '<img src="' . $item->{'img_remote'} . '">';

@@ -121,12 +121,12 @@ sub get_cartoon
 	my $img_link = parse_page_get_link( $html );
 	my $img      = get_url( $img_link,  $item->{'link'} );
 
-	print "Found `$img_link'\n";
+#	print "Found `$img_link'\n";
 
 	$item->{'link'} =~ m{cid=(\d+)};
 	my $fname = sprintf('%s_%i.gif', $item->{'date'}, $1||0);
 
-	print "Saving to $fname\n";
+#	print "Saving to $fname\n";
 
 	open( my $fd, '>:bytes', catfile($IMGDIR,$fname) ) or die("Can't open file $IMGDIR/$fname: $!\n");
 	print $fd $img;
@@ -176,8 +176,10 @@ sub write_rss
 		link           => 'http://foksuk.nl',
 		language       => 'nl',
 		description    => 'De dagelijkse Fokke&Sukke, rechtstreeks van de website',
-		pubDate        => DateTime::Format::Mail->format_datetime( $latest ),
-		lastBuildDate  => DateTime::Format::Mail->format_datetime( $now ),
+		pubDate        => $latest->strftime('%a, %d %b %Y %T %z'),
+		lastBuildDate  => $now->strftime('%a, %d %b %Y %T %z'),
+		#pubDate        => DateTime::Format::Mail->format_datetime( $latest ),
+		#lastBuildDate  => DateTime::Format::Mail->format_datetime( $now ),
 		skipDays       => [ 'Sunday' ],
 		ttl            => 24*60,
 		syn => {
@@ -193,10 +195,12 @@ sub write_rss
 		#print "=>$k\n";
 		my $item = $items->{$k};
 
-		my $desc = '<img src="' . $item->{'img_remote'} . '">';
-		my $date = DateTime::Format::Mail->format_datetime(
-			todate( $item->{'date'} )
-		);
+		my $desc = '<p><img width="468" src="' . $item->{'img_remote'} . '"></p>'
+		         . '<p>'. ( $item->{'title'} || ' ' )  .'</p>';
+		#my $date = DateTime::Format::Mail->format_datetime(
+		#	todate( $item->{'date'} )
+		#);
+		my $date = todate($item->{'date'})->strftime('%a, %d %b %Y %T %z');
 
 		$rss->add_item(
 			'title'        => $item->{'title'},
@@ -220,7 +224,7 @@ sub get_and_parse_feed
 
 	tie( my %db, 'MLDBM',
 		-Filename => $DBFILE,
-		-Flags    => DB_CREATE | DB_INIT_LOCK
+		#-Flags    => DB_CREATE | DB_INIT_LOCK
 	) or die "Cannot open file $DBFILE: $! $BerkeleyDB::Error\n" ;
 
 	foreach my $item (@items)
@@ -233,7 +237,7 @@ sub get_and_parse_feed
 
 		$db{ $item->{'link'} } = $item;
 
-		printf("Added `%s' (%s)\n", $item->{'title'}, $item->{'date'});
+		#printf("Added `%s' (%s)\n", $item->{'title'}, $item->{'date'});
 	}
 
 	write_rss($RSSFILE,\%db);

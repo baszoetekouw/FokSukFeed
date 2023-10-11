@@ -237,7 +237,7 @@ sub get_and_parse_feed
 
 		$db{ $item->{'link'} } = $item;
 
-		#printf("Added `%s' (%s)\n", $item->{'title'}, $item->{'date'});
+		printf("Added `%s' (%s)\n", $item->{'title'}, $item->{'date'});
 	}
 
 	write_rss($RSSFILE,\%db);

@@ -1,0 +1,8 @@
+To use this, you need to :
+
+apt install libdatetime-format-dateparse-perl
+apt install libberkeleydb-perl
+apt install libmldbm-perl
+apt install libdatetime-format-mail-perl
+apt install libwww-perl
+apt install libxml-rss-perl
